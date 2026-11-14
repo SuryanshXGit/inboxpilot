@@ -11,4 +11,4 @@
  *
  * You can still override it per visit with ?api=https://other-host
  */
-window.INBOXPILOT_API_BASE = '';
+window.INBOXPILOT_API_BASE = 'https://inboxpilot-6xa3.onrender.com';
