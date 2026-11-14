@@ -1,0 +1,24 @@
+# Core web framework
+fastapi>=0.115,<1.0
+uvicorn[standard]>=0.29,<1.0
+
+# Database (PostgreSQL: Supabase, Neon or any standard PostgreSQL)
+psycopg[binary]>=3.1,<4.0
+
+# Validation / configuration
+pydantic>=2.9,<3.0
+pydantic-settings>=2.2,<3.0
+python-dotenv>=1.0,<2.0
+
+# Authentication
+PyJWT>=2.8,<3.0
+
+# HTTP client used by the AI provider adapters and the test suite
+httpx>=0.27,<1.0
+
+# LangGraph orchestration for the AI engine
+langgraph>=0.2.60,<2.0
+
+# Tests
+pytest>=8.0,<10.0
+pytest-asyncio>=0.23,<2.0
