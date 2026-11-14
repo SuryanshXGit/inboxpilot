@@ -6,9 +6,18 @@ const SYNC_META_KEY = 'inboxpilot_sync_meta';
 const API_BASE = (() => {
   const override = new URLSearchParams(location.search).get('api');
   if (override !== null) return override.replace(/\/+$/, '');
+  // Static deployments (Vercel) point at the hosted API from config.js.
+  const configured = typeof window.INBOXPILOT_API_BASE === 'string'
+    ? window.INBOXPILOT_API_BASE.trim()
+    : '';
+  if (configured) return configured.replace(/\/+$/, '');
   // Served by FastAPI at /inboxpilot/ -> same origin. Opened from a separate
-  // static dev server -> talk to the local FastAPI port instead.
-  return location.pathname.startsWith('/inboxpilot') ? '' : 'http://127.0.0.1:8000';
+  // static dev server (or file://) -> talk to the local FastAPI port instead.
+  if (location.protocol === 'file:') return 'http://127.0.0.1:8000';
+  if (['localhost', '127.0.0.1'].includes(location.hostname) && location.port !== '8000') {
+    return 'http://127.0.0.1:8000';
+  }
+  return '';
 })();
 let authToken = '';
 try { authToken = localStorage.getItem(TOKEN_KEY) || ''; } catch {}

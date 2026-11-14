@@ -1,0 +1,49 @@
+# Render Blueprint for the InboxPilot FastAPI service.
+#
+# The database stays on Neon; set DATABASE_URL (and API keys) as secret
+# environment variables in the Render dashboard, or let `sync: false` prompt
+# for them when the Blueprint is created.
+#
+# Frontend: deploy ../frontend to Vercel and point its config.js at this
+# service's public URL.
+
+services:
+  - type: web
+    name: inboxpilot-api
+    runtime: python
+    plan: free
+    region: oregon
+    rootDir: integrated_backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.8
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_ALGORITHM
+        value: HS256
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: 1440
+      - key: CORS_ORIGINS
+        sync: false
+      - key: LOG_LEVEL
+        value: INFO
+      - key: INBOXPILOT_DIR
+        value: ""
+      - key: AI_PRIMARY_PROVIDER
+        value: groq
+      - key: AI_FALLBACK_PROVIDER
+        value: openai
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: OPENAI_MODEL
+        value: gpt-4o-mini
+      - key: GROQ_MODEL
+        value: openai/gpt-oss-120b
