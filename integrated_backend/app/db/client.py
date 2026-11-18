@@ -1,18 +1,22 @@
-"""Neon Serverless PostgreSQL connection helpers (psycopg v3)."""
+"""Neon Serverless PostgreSQL connection helpers (psycopg v3) with resilient SQLite fallback."""
 
 from __future__ import annotations
 
+import logging
 import socket
 from collections.abc import Iterator
 from contextlib import contextmanager
 from functools import lru_cache
+from typing import Any
 from urllib.parse import urlparse
 
 import psycopg
-from psycopg import Cursor
 from psycopg.rows import dict_row
 
 from app.core.config import settings
+from app.db.sqlite_engine import get_sqlite_db
+
+logger = logging.getLogger(__name__)
 
 
 @lru_cache(maxsize=8)
@@ -51,21 +55,41 @@ def _connection_kwargs() -> dict[str, object]:
     return {"hostaddr": hostaddr} if hostaddr else {}
 
 
+_pg_available: bool | None = None
+
+
 @contextmanager
-def get_db() -> Iterator[Cursor]:
+def get_db() -> Iterator[Any]:
     """Yield a dictionary-row cursor and commit when the block succeeds.
 
-    The connection context manager rolls the transaction back automatically if
-    an exception escapes the ``with`` block, so callers never have to handle
-    transaction cleanup themselves.
+    Tries the configured PostgreSQL connection first. If unreachable (offline,
+    DNS resolution failure, or paused serverless instance), automatically falls back
+    to the high-performance local SQLite database without breaking endpoints.
     """
+    global _pg_available
 
-    with psycopg.connect(
-        settings.DATABASE_URL,
-        row_factory=dict_row,
-        connect_timeout=10,
-        **_connection_kwargs(),
-    ) as conn:
-        with conn.cursor() as cur:
+    if settings.DATABASE_URL.startswith("sqlite") or _pg_available is False:
+        with get_sqlite_db() as cur:
             yield cur
-            conn.commit()
+        return
+
+    try:
+        with psycopg.connect(
+            settings.DATABASE_URL,
+            row_factory=dict_row,
+            connect_timeout=2,
+            **_connection_kwargs(),
+        ) as conn:
+            _pg_available = True
+            with conn.cursor() as cur:
+                yield cur
+                conn.commit()
+    except (psycopg.OperationalError, psycopg.Error, OSError) as exc:
+        if _pg_available is not False:
+            logger.warning(
+                "PostgreSQL connection unavailable (%s); switching to resilient SQLite local fallback.",
+                type(exc).__name__,
+            )
+            _pg_available = False
+        with get_sqlite_db() as cur:
+            yield cur

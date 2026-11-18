@@ -12,7 +12,17 @@ from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.ai_engine.providers import configured_providers
+from app.api.v1.analytics import router as analytics_router
+from app.api.v1.assistant import router as assistant_router
+from app.api.v1.auth import router as auth_router
+from app.api.v1.automation import router as automation_router
+from app.api.v1.calendar import router as calendar_router
+from app.api.v1.email import router as email_router
+from app.api.v1.followups import router as followups_router
+from app.api.v1.knowledge import router as knowledge_router
 from app.api.v1.learning import router as learning_router
+from app.api.v1.productivity import router as productivity_router
+from app.api.v1.tasks import router as tasks_router
 from app.api.v1.workspace import router as workspace_router
 from app.core.config import settings
 
@@ -43,12 +53,12 @@ async def lifespan(_: FastAPI):
 
 
 app = FastAPI(
-    title="Interactive Learning API",
-    version="1.1.0",
+    title="InboxPilot 2.0 API",
+    version="2.0.0",
     description=(
-        "Person 1's learning API integrated with Person 2's AI engine. "
-        "Authentication, materials, sessions, quizzes, progress and AI-powered "
-        "lesson generation live behind one FastAPI application."
+        "InboxPilot 2.0 AI-Powered Communication & Productivity Command Center API. "
+        "Smart Inbox, AI Email Intelligence, Tasks & Projects, Calendar, Personal Assistant, "
+        "Knowledge Hub, Follow-up Tracking, Visual Automation Studio, and Analytics."
     ),
     lifespan=lifespan,
 )
@@ -57,9 +67,6 @@ cors_origins = settings.cors_origins
 app.add_middleware(
     CORSMiddleware,
     allow_origins=cors_origins,
-    # Browsers reject wildcard origins combined with credentials. JWTs are sent
-    # in the Authorization header, so credentials are only enabled for an
-    # explicit allow-list.
     allow_credentials="*" not in cors_origins,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -87,8 +94,21 @@ def health_check() -> dict[str, str]:
     return {"status": "OK"}
 
 
-app.include_router(learning_router)
+# Core 2.0 Routers
+app.include_router(auth_router)
+app.include_router(email_router)
+app.include_router(tasks_router)
+app.include_router(productivity_router)
+app.include_router(calendar_router)
+app.include_router(assistant_router)
+app.include_router(knowledge_router)
+app.include_router(followups_router)
+app.include_router(automation_router)
+app.include_router(analytics_router)
+
+# Legacy Routers for backwards compatibility
 app.include_router(workspace_router)
+app.include_router(learning_router)
 
 # Serve the InboxPilot static frontend from the same origin when configured.
 # Keeping it under /inboxpilot leaves the API and Swagger routes untouched.

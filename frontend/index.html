@@ -1,42 +1,912 @@
 <!DOCTYPE html>
-
 <html lang="en" data-theme="dark" data-background="midnight">
 <head>
-<meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<meta content="#050505" name="theme-color"/><title>InboxPilot | VentureX workspace</title>
-<link href="./styles.css" rel="stylesheet"/>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="theme-color" content="#090d16"/>
+  <title>InboxPilot 2.0 — AI Communication & Productivity Command Center</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="./styles.css" rel="stylesheet"/>
 </head>
 <body>
-<div class="app">
-<aside class="sidebar" id="appSidebar"><div class="sidebar-header"><div class="brand"><span class="brand-icon" aria-hidden="true"></span><div class="brand-label">InboxPilot<small>VENTUREX</small></div></div><button aria-controls="appSidebar" aria-expanded="true" aria-label="Collapse sidebar" class="sidebar-collapse" id="sidebarToggle" title="Collapse sidebar" type="button"><svg aria-hidden="true" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewbox="0 0 24 24" width="20"><rect height="16" rx="3" width="18" x="3" y="4"></rect><path d="M9 4v16"></path></svg></button></div><div><nav aria-label="Workspace navigation" class="nav" id="workspaceNav"><button aria-label="Overview" class="active" aria-current="page" data-view="dashboard" title="Overview"><span class="sym">▦</span><span class="nav-label">Overview</span></button><button aria-label="Inbox" data-view="inbox" title="Inbox"><span class="sym">✉</span><span class="nav-label">Inbox</span><span class="count" id="inboxCount">3</span></button><button aria-label="Workspace" data-view="workspace" title="Workspace"><span class="sym">◈</span><span class="nav-label">Workspace</span></button><button aria-label="My Tasks" data-view="tasks" title="My Tasks"><span class="sym">☑</span><span class="nav-label">My Tasks</span></button><button aria-label="Calendar" data-view="calendar" title="Calendar"><span class="sym">▣</span><span class="nav-label">Calendar</span></button><button aria-label="Approval Needed" data-view="approvals" title="Approval Needed"><span class="sym">◇</span><span class="nav-label">Approval Needed</span><span class="count" id="navApprovalCount">1</span></button><button aria-label="Library" data-view="library" title="Library" type="button"><span aria-hidden="true" class="sym">▤</span><span class="nav-label">Library</span></button></nav></div><div class="sidebar-secondary"><div class="nav-group-label">TOOLS & CONNECTIONS</div><nav class="nav" aria-label="Tools navigation"><button aria-label="Plugins" data-view="plugins" title="Plugins" type="button"><span aria-hidden="true" class="sym">⬡</span><span class="nav-label">Plugins</span></button></nav></div><div class="sidebar-foot"><strong>VentureX prototype</strong><p>Workspace data syncs to the backend when connected; files stay on this device.</p></div></aside>
-<div class="content"><header class="topbar"><button aria-label="Toggle sidebar" class="mobile-sidebar-toggle" id="mobileSidebarToggle" title="Toggle sidebar" type="button">☰</button><div class="breadcrumb"><strong id="crumb">Overview</strong></div><div class="top-actions"><span class="live" id="connectionState" title="Sign in to sync this workspace with the backend">● Local only</span><button class="theme-shortcut" id="themeShortcut" type="button" title="Toggle light / dark theme" aria-label="Toggle light or dark theme">☀</button><div class="profile-wrap"><button class="avatar profile-button" id="profileButton" type="button" aria-expanded="false" aria-controls="profileMenu" aria-label="Profile and settings" title="Profile and settings">IP</button><div class="profile-menu" id="profileMenu" hidden><div class="profile-menu-head"><strong id="menuProfileName">Guest</strong><small id="menuProfileMeta">Not signed in</small></div><button type="button" data-settings="account">◉ &nbsp; Profile & login</button><button type="button" data-settings="appearance">◐ &nbsp; Appearance & themes</button><button type="button" data-settings="usage">◴ &nbsp; Token usage</button><button type="button" data-settings="subscription">✦ &nbsp; Subscriptions</button><button type="button" data-settings="privacy">♢ &nbsp; Privacy & security</button><div class="profile-menu-bottom">Preferences apply on this device.</div></div></div></div></header>
-<main class="main">
-<section class="section active" id="dashboard">
-<div class="headline"><div><h1 id="dashboardHeading">Workspace overview</h1><p class="subtitle">Plan your next steps and keep track of your inbox, tasks, and schedule.</p></div><div class="headline-tools"><button aria-label="Add new task, event, note or inbox item" class="add-icon" id="quickAdd" title="Add new information">+</button><div class="date-chip" id="today">Today</div></div></div>
-<div class="overview-hero"><div class="card"><div class="card-head"><div><h2>✦ Tell InboxPilot what you need</h2><p>Describe a goal to preview an action plan.</p></div></div><div class="agent-box"><textarea aria-label="Describe your goal" class="prompt" id="goal" maxlength="500" placeholder="e.g. Confirm the venue for Friday's tech club event and create follow-up tasks..."></textarea><div class="prompt-actions"><div class="examples"><button class="example" data-prompt="Confirm the venue for Friday's tech club event">Confirm venue</button><button class="example" data-prompt="Summarize sponsor emails and prepare follow-up replies">Handle sponsors</button><button class="example" data-prompt="Plan our volunteer meeting and organize follow-up tasks">Plan meeting</button></div><button class="primary" id="runBtn">✦ Plan actions →</button></div><div class="workflow" id="workflow"><div class="workflow-top"><strong>Agent workflow preview</strong><span class="state" id="workflowStatus">READY</span></div><div class="steps" id="steps"><div class="step wait"><span class="circle">1</span><span class="step-txt">Set a goal above to start a workflow</span><span class="status">Waiting</span></div></div></div></div></div><section aria-label="Overview at a glance" class="card overview-summary"><div class="card-head"><div><h2>Overview at a glance</h2></div></div><div class="metrics"><div class="metric"><div class="top">Inbox messages <span class="emoji">✉</span></div><strong id="messagesMetric">3</strong><div class="desc" id="highPriorityCount">1 high priority</div></div><div class="metric"><div class="top">Tasks organized <span class="emoji">☑</span></div><strong id="tasksMetric">04</strong><div class="desc">Across your workflow</div></div><div class="metric"><div class="top">Upcoming events <span class="emoji">◷</span></div><strong id="eventsMetric">3</strong><div class="desc">From today onward</div></div><div class="metric"><div class="top">Pending approvals <span class="emoji">◇</span></div><strong id="approvalMetric">01</strong><div class="desc">You stay in control</div></div></div></section></div><div class="card row" style="margin-bottom:19px"><div class="card-head"><div><h2>Upcoming schedule</h2></div><button class="small-link" data-go="calendar">Calendar →</button></div><div class="calendar-list" id="calendarPreview"></div></div><p class="footer-note">Planning uses sample rules. Workspace changes sync when you're signed in; otherwise they're cached on this device.</p>
-</section>
-<section class="section" id="inbox"><div class="page-intro"><div class="eyebrow">INBOX</div><h2>Only what matters.</h2><p>Example messages are grouped so you can focus on urgent decisions.</p></div><div class="card full-card"><div class="card-head"><h2>Prioritized messages</h2><span class="tag" id="inboxTotal">3 messages</span></div><div id="inboxAll"></div></div><div class="notice">This inbox uses demo messages. Gmail integration is planned.</div></section>
-<section class="section" id="workspace"><div class="page-intro"><div class="eyebrow">ONE PLACE FOR EVERYTHING</div><h2>Your Workspace</h2><p>See the information you have collected, grouped into useful sections. Collapse what you don't need.</p></div>
-<div class="workspace-panels">
-<details class="workspace-panel card" open=""><summary>◈  Approval Needed <span class="workspace-summary-badge" id="workspaceApprovalBadge">1 pending</span></summary><div id="workspaceApprovalContent"></div></details>
-<details class="workspace-panel card" open=""><summary>☑  Tasks <span class="workspace-summary-badge" id="workspaceTaskBadge">4 items</span></summary><div class="mini-list" id="workspaceTasks"></div></details>
-<details class="workspace-panel card" open=""><summary>▣  Calendar <span class="workspace-summary-badge" id="workspaceEventBadge">3 events</span></summary><div class="calendar-list" id="workspaceCalendar"></div></details>
-<details class="workspace-panel card" open=""><summary>✎  Notes &amp; collected info <span class="workspace-summary-badge" id="workspaceNoteBadge">0 notes</span></summary><div class="notes-list" id="workspaceNotes"></div></details>
-</div></section>
-<section class="section" id="approvals"><div class="page-intro"><div class="eyebrow">HUMAN IN THE LOOP</div><h2>Approval Needed</h2><p>Review and record a decision on the sample draft.</p></div><div class="card full-card"><div class="card-head"><h2>Awaiting your decision</h2><span class="subtle" id="approvalsPageCount">1 pending</span></div><div id="approvalPageContent"></div></div></section>
-<section class="section" id="tasks"><div class="page-intro"><div class="eyebrow">FOLLOW-UPS, SORTED</div><h2>Tasks that don't get lost.</h2><p>Check off tasks and stay organized as work progresses.</p></div><div class="card full-card"><div class="card-head"><h2>Task board</h2><button class="small-link" id="addTask">+ Add task</button></div><div class="mini-list" id="tasksAll"></div></div></section>
-<section class="section" id="calendar"><div class="page-intro"><div class="eyebrow">YOUR SCHEDULE</div><h2>Your calendar, at a glance.</h2><p>Navigate months, select a date, and assign priorities to your events.</p></div><div class="calendar-layout"><div class="card month-card"><div class="month-head"><button class="outline icon-btn" id="calPrev" type="button" aria-label="Previous month">‹</button><h2 id="monthTitle">Month</h2><div class="month-actions"><button class="outline" id="calToday" type="button">Today</button><button class="outline icon-btn" id="calNext" type="button" aria-label="Next month">›</button></div></div><div class="weekdays"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div><div class="month-grid" id="monthGrid" aria-label="Monthly calendar"></div><div class="priority-legend"><span><i class="priority-dot high"></i> High</span><span><i class="priority-dot medium"></i> Medium</span><span><i class="priority-dot low"></i> Low</span></div></div><div class="card calendar-detail"><div class="card-head"><div><h2 id="selectedDateTitle">Selected day</h2><p id="selectedDayCount">Events for this day</p></div><button type="button" class="primary" id="calendarAddEvent">+ Event</button></div><div class="calendar-day-list" id="selectedDayEvents"></div></div></div><div class="notice">Calendar events are saved to your workspace and sync when you're signed in.</div></section>
-<section class="section" id="library"><div class="page-intro"><div class="eyebrow">YOUR KNOWLEDGE BASE</div><h2>Library</h2><p>Upload, search, and download PDFs and other files stored on this device.</p></div><div class="card library-card"><div class="library-toolbar"><div><h3>My files <span class="library-count" id="libraryCount">0</span></h3><small id="libraryStorage">Device storage · not synced to the backend</small></div><div class="library-buttons"><input id="fileInput" type="file" multiple hidden/><button type="button" class="primary" id="uploadFiles">↑ Upload files</button></div></div><button type="button" class="library-dropzone" id="libraryDropzone"><span aria-hidden="true">⇧</span><strong>Drop files here</strong><span>Choose PDFs and other files up to 50 MB each</span></button><div class="library-search-wrap"><input id="librarySearch" type="search" class="add-field" placeholder="Search your library by file name…" aria-label="Search library"/></div><div id="libraryFiles" class="library-file-list" aria-live="polite"><div class="empty">No files uploaded yet.</div></div></div><p class="footer-note">Library files stay on this device; clearing browser site data removes them.</p></section>
-<section class="section" id="plugins">
-<div class="page-intro plugins-intro"><div class="eyebrow">CONNECT YOUR TOOLS</div><h2>Plugins &amp; integrations</h2><p>Explore the integrations planned for InboxPilot.</p></div>
-<div class="plugin-controls"><div><h3>Plugin directory</h3></div><label class="plugin-search-wrap"><span aria-hidden="true">⌕</span><input aria-label="Search plugins" autocomplete="off" id="pluginSearch" placeholder="Search plugins..." type="search"/></label></div>
-<div aria-live="polite" class="plugin-grid" id="pluginGrid"></div>
 
-</section></main></div></div>
-<div class="modal-backdrop" id="modalBg" role="presentation"><div aria-labelledby="modalTitle" aria-modal="true" class="modal" role="dialog"><h3 id="modalTitle">Message</h3><p id="modalText"></p><footer><button class="outline" id="closeModal">Close</button></footer></div></div><div class="toast" id="toast" role="status"></div><div aria-live="polite" class="sync-pill" id="syncStatus" role="status">● Local only</div>
-<div class="modal-backdrop" id="addBackdrop"><div aria-labelledby="addTitle" aria-modal="true" class="modal add-modal" role="dialog"><div class="add-top"><div><div class="eyebrow">QUICK ADD</div><h3 id="addTitle">Add to InboxPilot</h3></div><button aria-label="Close" class="close-x" id="closeAdd">×</button></div><p class="add-help">New items appear in your workspace and sync when a backend account is connected.</p><div aria-label="Information type" class="add-types" role="group" id="addTypes"><button class="selected" data-addtype="task" type="button">☑ Task</button><button data-addtype="event" type="button">▣ Event</button><button data-addtype="note" type="button">✎ Note</button><button data-addtype="inbox" type="button">✉ Inbox</button></div><form id="addForm"><label class="add-label" for="newTitle" id="newTitleLabel">Task name</label><input class="add-field" id="newTitle" maxlength="130" placeholder="e.g. Confirm event venue" required=""/><label class="add-label" for="newDetails" id="newDetailsLabel">Due date / details</label><input class="add-field" id="newDetails" maxlength="220" placeholder="e.g. Tomorrow"/><label class="add-label" for="newBody" hidden="" id="newBodyLabel">Additional information</label><textarea class="add-field" hidden="" id="newBody" maxlength="1000" placeholder="Add notes..." rows="3"></textarea><div id="eventFields" class="event-form-extra" hidden><label class="add-label" for="eventDate">Event date</label><input class="add-field" type="date" id="eventDate"/><label class="add-label" for="eventTime">Time (optional)</label><input class="add-field" type="time" id="eventTime"/><label class="add-label" for="eventPriority">Priority</label><select class="add-field" id="eventPriority"><option value="high">High — red</option><option value="medium" selected>Medium — yellow</option><option value="low">Low — green</option></select></div><div class="add-actions"><button class="outline" id="cancelAdd" type="button">Cancel</button><button class="primary" id="addSubmit" type="submit">Add to workspace</button></div></form></div></div>
-<div class="settings-backdrop" id="settingsBackdrop" hidden><aside class="settings-panel" role="dialog" aria-modal="true" aria-labelledby="settingsTitle"><div class="settings-head"><div><span class="eyebrow">INBOXPILOT</span><h2 id="settingsTitle">Settings</h2></div><button type="button" id="closeSettings" class="outline icon-btn" aria-label="Close settings">×</button></div><div class="settings-tabs" role="group" aria-label="Settings categories"><button data-tab="account" class="selected">Profile &amp; login</button><button data-tab="appearance">Appearance</button><button data-tab="usage">Token usage</button><button data-tab="subscription">Subscription</button><button data-tab="privacy">Privacy & security</button></div><div id="settingsContent" class="settings-content"></div></aside></div>
-<script defer="" src="./config.js"></script>
-<script defer="" src="./app.js"></script>
-<div class="privacy-screen" id="privacyScreen" role="dialog" aria-modal="true" aria-labelledby="privacyScreenTitle" hidden><strong id="privacyScreenTitle">Workspace hidden</strong><button type="button" class="primary" id="revealWorkspace">Show workspace</button></div>
-</body></html>
+  <!-- ========================================================================= -->
+  <!-- 1. PUBLIC SAAS LANDING PAGE (Shown when logged out or toggled)            -->
+  <!-- ========================================================================= -->
+  <div class="landing-page" id="landingPage">
+    <header class="landing-nav">
+      <div class="brand">
+        <span class="brand-badge">⚡</span>
+        <div class="brand-text">InboxPilot <span class="version-tag">2.0</span></div>
+      </div>
+      <nav class="landing-links">
+        <a href="#landingFeatures">Features</a>
+        <a href="#landingWorkflow">How It Works</a>
+        <a href="#landingSecurity">Security & Privacy</a>
+        <a href="#landingPricing">Pricing</a>
+      </nav>
+      <div class="landing-actions">
+        <button type="button" class="btn-ghost" id="landingLoginBtn">Sign In</button>
+        <button type="button" class="btn-primary" id="landingRegisterBtn">Get Started Free →</button>
+      </div>
+    </header>
+
+    <main class="landing-main">
+      <!-- Hero Section -->
+      <section class="hero-section">
+        <div class="hero-pill">
+          <span class="pill-dot"></span> Next-Generation AI Productivity Platform · Powered by Groq & Neon
+        </div>
+        <h1 class="hero-title">
+          Turn scattered emails into <br/>
+          <span class="gradient-text">calm, organized, actionable work.</span>
+        </h1>
+        <p class="hero-subtitle">
+          InboxPilot does not merely summarize messages. It understands communication, extracts deadlines,
+          prioritizes high-stakes conversations, and turns correspondence into verified tasks—keeping you firmly in control.
+        </p>
+        <div class="hero-cta-group">
+          <button type="button" class="btn-primary btn-large" id="heroStartBtn">Launch Command Center →</button>
+          <button type="button" class="btn-secondary btn-large" id="heroDemoBtn">Explore Interactive Demo</button>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-item"><strong>10×</strong><span>Faster Email Triage</span></div>
+          <div class="stat-divider"></div>
+          <div class="stat-item"><strong>100%</strong><span>Human In The Loop</span></div>
+          <div class="stat-divider"></div>
+          <div class="stat-item"><strong>0</strong><span>Model Training on Data</span></div>
+          <div class="stat-divider"></div>
+          <div class="stat-item"><strong>Sub-Second</strong><span>Groq AI Inference</span></div>
+        </div>
+      </section>
+
+      <!-- Interface Preview -->
+      <section class="landing-preview-section">
+        <div class="preview-browser-frame">
+          <div class="frame-bar">
+            <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+            <div class="frame-url">https://app.inboxpilot.io/command-center</div>
+          </div>
+          <div class="preview-mockup">
+            <div class="mock-card briefing">
+              <div class="mock-header">
+                <span class="badge-blue">✦ Daily AI Briefing</span>
+                <span class="mock-time">Today, 9:00 AM</span>
+              </div>
+              <h3>Good morning, Alex. 2 urgent conversations require your decision before noon.</h3>
+              <p>Seminar Hall tech setup deadline is 4 PM. Schedule K-1 tax filing requires your review before Marcus Vance files with authorities.</p>
+              <div class="mock-tags">
+                <span class="tag-red">Urgent: Seminar Hall AV</span>
+                <span class="tag-yellow">High: Tax Schedule K-1</span>
+                <span class="tag-green">Upcoming: NovaTech Syndicate Zoom</span>
+              </div>
+            </div>
+            <div class="mock-grid">
+              <div class="mock-card">
+                <h4>✉ Smart Priority Triage</h4>
+                <p>Emails categorized by genuine business impact with explainable reason tags.</p>
+              </div>
+              <div class="mock-card">
+                <h4>☑ Email-to-Task Pipeline</h4>
+                <p>One-click conversion with confidence ratings and direct links back to original messages.</p>
+              </div>
+              <div class="mock-card">
+                <h4>🛡 Phishing & Risk Radar</h4>
+                <p>Heuristic detection of domain spoofing, urgent wire requests, and deceptive links.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Core Features Grid -->
+      <section class="landing-section" id="landingFeatures">
+        <div class="section-badge">PRODUCT CAPABILITIES</div>
+        <h2 class="section-title">Everything you need to master your communications.</h2>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">✉</div>
+            <h3>Smart Inbox</h3>
+            <p>9 automated categories from Primary and Finance to Spam/Suspicious. Manual correction with preference memory.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">✦</div>
+            <h3>Advanced AI Summaries</h3>
+            <p>Key points, decisions, questions asked, and next steps extracted in seconds from long threads.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">✍</div>
+            <h3>5-Tone Reply Drafter</h3>
+            <p>Generate replies in Professional, Friendly, Formal, Concise, or Persuasive tone. Never sends without explicit approval.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">☑</div>
+            <h3>Tasks & Kanban Board</h3>
+            <p>Organize work across Todo, In Progress, Blocked, and Completed. Track due dates and project milestones.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">▣</div>
+            <h3>Meeting & Calendar Intelligence</h3>
+            <p>Monthly, weekly, and daily agendas synchronized with detected meeting invites and deadlines.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🤖</div>
+            <h3>AI Personal Assistant</h3>
+            <p>Ask natural questions against your emails, schedule, and notes with direct citation of source records.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">⏳</div>
+            <h3>Follow-up Watchdog</h3>
+            <p>Detect unanswered messages awaiting client or vendor responses. Suggests optimal nudge dates.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">⚡</div>
+            <h3>Automation Studio</h3>
+            <p>Visual Trigger → Condition → Action workflow builder to automate receipts, reminders, and tags.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Security & Privacy Section -->
+      <section class="landing-section security-section" id="landingSecurity">
+        <div class="section-badge">SECURITY FIRST</div>
+        <h2 class="section-title">Built with enterprise security and strict user privacy.</h2>
+        <div class="security-grid">
+          <div class="security-card">
+            <h4>Encrypted Credentials</h4>
+            <p>OAuth tokens and sensitive credentials encrypted at rest with authenticated symmetric ciphers.</p>
+          </div>
+          <div class="security-card">
+            <h4>Multi-Tenant Isolation</h4>
+            <p>Strict object-level authorization on every database query. Your data is never visible to others.</p>
+          </div>
+          <div class="security-card">
+            <h4>Prompt Injection Defense</h4>
+            <p>Untrusted email content isolated in data delimiters. Emails can never instruct AI to leak secrets.</p>
+          </div>
+          <div class="security-card">
+            <h4>Full Data Sovereignty</h4>
+            <p>Export your complete data in one click. Instant permanent account and message deletion upon request.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Transparent Pricing Section -->
+      <section class="landing-section" id="landingPricing">
+        <div class="section-badge">TRANSPARENT PRICING</div>
+        <h2 class="section-title">Simple plans designed for focus and productivity.</h2>
+        <div class="pricing-grid">
+          <div class="pricing-card active">
+            <div class="pricing-badge">CURRENT RELEASE</div>
+            <h3>Community Beta</h3>
+            <div class="price">$0 <span>/ forever</span></div>
+            <p>Full access to all InboxPilot 2.0 features during public beta.</p>
+            <ul class="pricing-features">
+              <li>✓ Full Smart Inbox with 9 categories</li>
+              <li>✓ Real Groq AI Summarization & Priority</li>
+              <li>✓ Contextual Reply Drafting in 5 tones</li>
+              <li>✓ Tasks, Kanban Board & Projects</li>
+              <li>✓ Meeting & Calendar Intelligence</li>
+              <li>✓ AI Personal Assistant chat</li>
+              <li>✓ Automation Studio & Workflow Engine</li>
+              <li>✓ Analytics & Productivity Reports</li>
+            </ul>
+            <button type="button" class="btn-primary btn-block" id="pricingBetaBtn">Start Free Today</button>
+          </div>
+          <div class="pricing-card">
+            <div class="pricing-badge planned">PLANNED PRO</div>
+            <h3>Pro Executive</h3>
+            <div class="price">$19 <span>/ month (Planned)</span></div>
+            <p>For high-volume professionals and multi-account workflows.</p>
+            <ul class="pricing-features">
+              <li>✓ Everything in Community Beta</li>
+              <li>✓ Unlimited connected Gmail & Outlook inboxes</li>
+              <li>✓ Team workspaces & shared task assignment</li>
+              <li>✓ Custom AI tone profiles & fine-tuning</li>
+              <li>✓ Priority Groq enterprise capacity</li>
+              <li>✓ Dedicated SLA & priority support</li>
+            </ul>
+            <button type="button" class="btn-secondary btn-block" disabled>Planned Tier</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="landing-footer">
+      <div class="footer-left">
+        <strong>InboxPilot 2.0</strong> — AI Communication & Productivity Command Center
+        <p>© 2026 InboxPilot Systems. All rights reserved.</p>
+      </div>
+      <div class="footer-right">
+        <button type="button" class="link-btn" id="footerPrivacyBtn">Privacy & Security</button>
+        <button type="button" class="link-btn" id="footerAppBtn">Open Web App</button>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 2. MAIN APPLICATION SHELL (Command Center & 10 Core Modules)              -->
+  <!-- ========================================================================= -->
+  <div class="app" id="appShell" style="display:none;">
+    
+    <!-- Sidebar -->
+    <aside class="sidebar" id="appSidebar">
+      <div class="sidebar-header">
+        <div class="brand" id="brandHomeBtn" role="button" title="Back to Landing Page">
+          <span class="brand-badge">⚡</span>
+          <div class="brand-text">InboxPilot <small>2.0 PRO</small></div>
+        </div>
+        <button type="button" class="sidebar-collapse" id="sidebarToggle" aria-label="Toggle sidebar">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+      </div>
+
+      <nav class="nav" id="mainNav" aria-label="Application navigation">
+        <button class="nav-item active" data-view="command-center">
+          <span class="nav-icon">▦</span><span class="nav-label">Command Center</span>
+        </button>
+        <button class="nav-item" data-view="inbox">
+          <span class="nav-icon">✉</span><span class="nav-label">Smart Inbox</span>
+          <span class="nav-badge" id="navInboxBadge">3</span>
+        </button>
+        <button class="nav-item" data-view="assistant">
+          <span class="nav-icon">🤖</span><span class="nav-label">AI Assistant</span>
+        </button>
+        <button class="nav-item" data-view="tasks">
+          <span class="nav-icon">☑</span><span class="nav-label">Tasks & Projects</span>
+          <span class="nav-badge" id="navTaskBadge">5</span>
+        </button>
+        <button class="nav-item" data-view="calendar">
+          <span class="nav-icon">▣</span><span class="nav-label">Calendar</span>
+        </button>
+        <button class="nav-item" data-view="knowledge">
+          <span class="nav-icon">▤</span><span class="nav-label">Knowledge Hub</span>
+        </button>
+        <button class="nav-item" data-view="followups">
+          <span class="nav-icon">⏳</span><span class="nav-label">Follow-ups</span>
+          <span class="nav-badge yellow" id="navFollowupBadge">2</span>
+        </button>
+        <button class="nav-item" data-view="automations">
+          <span class="nav-icon">⚡</span><span class="nav-label">Automation Studio</span>
+        </button>
+        <button class="nav-item" data-view="analytics">
+          <span class="nav-icon">📊</span><span class="nav-label">Analytics</span>
+        </button>
+        <button class="nav-item" data-view="settings">
+          <span class="nav-icon">⚙</span><span class="nav-label">Settings & Privacy</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-chip" id="sidebarUserChip">
+          <div class="avatar" id="sidebarAvatar">IP</div>
+          <div class="user-info">
+            <strong id="sidebarUserName">Guest User</strong>
+            <small id="sidebarUserStatus">Connected</small>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="content">
+      
+      <!-- Topbar -->
+      <header class="topbar">
+        <button type="button" class="mobile-sidebar-toggle" id="mobileSidebarToggle">☰</button>
+        <div class="breadcrumb"><strong id="pageTitle">Command Center</strong></div>
+        
+        <div class="topbar-search">
+          <span class="search-icon">🔍</span>
+          <input type="search" id="globalSearch" placeholder="Search emails, tasks, notes, decisions... (Press /)" aria-label="Search"/>
+        </div>
+
+        <div class="topbar-actions">
+          <button type="button" class="btn-focus" id="focusModeBtn" title="Toggle Deep Work Focus Mode">🎯 Focus</button>
+          <button type="button" class="btn-quick-add" id="topbarAddBtn" title="Quick Add">+ Add</button>
+          <div class="theme-toggle" id="themeToggleBtn" title="Toggle Dark/Light theme">☀</div>
+          
+          <!-- Profile Dropdown -->
+          <div class="profile-menu-wrap">
+            <button type="button" class="avatar-btn" id="avatarMenuBtn">IP</button>
+            <div class="profile-dropdown" id="profileDropdown" hidden>
+              <div class="dropdown-header">
+                <strong id="dropdownName">Alex Hunter</strong>
+                <small id="dropdownEmail">alex@venturex.io</small>
+              </div>
+              <button type="button" class="dropdown-item" data-go-settings="profile">Profile & Preferences</button>
+              <button type="button" class="dropdown-item" data-go-settings="accounts">Connected Inboxes</button>
+              <button type="button" class="dropdown-item" data-go-settings="security">Security & Password</button>
+              <div class="dropdown-divider"></div>
+              <button type="button" class="dropdown-item text-danger" id="logoutActionBtn">Sign Out</button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- View Containers -->
+      <main class="main-viewport">
+        
+        <!-- 1. COMMAND CENTER -->
+        <section class="section active" id="view-command-center">
+          <div class="view-header">
+            <div>
+              <h1>Executive Command Center</h1>
+              <p class="subtitle">Unified overview of daily briefing, priorities, upcoming schedule, and action items.</p>
+            </div>
+            <div class="date-chip" id="commandCenterDate">Wednesday, Nov 18</div>
+          </div>
+
+          <!-- Daily Briefing Banner -->
+          <div class="briefing-card" id="briefingContainer">
+            <div class="briefing-header">
+              <div class="briefing-badge">✦ AI DAILY BRIEFING</div>
+              <button type="button" class="btn-refresh" id="refreshBriefingBtn">↻ Refresh</button>
+            </div>
+            <h2 id="briefingGreeting">Loading your morning executive summary...</h2>
+            <p id="briefingAdvice" class="briefing-advice"></p>
+            
+            <div class="briefing-grid">
+              <div class="briefing-column">
+                <h4>🔥 Urgent Attention Required</h4>
+                <div id="briefingUrgentList" class="briefing-items"></div>
+              </div>
+              <div class="briefing-column">
+                <h4>☑ Today's Objectives</h4>
+                <div id="briefingTaskList" class="briefing-items"></div>
+              </div>
+              <div class="briefing-column">
+                <h4>📅 Schedule Today</h4>
+                <div id="briefingMeetingList" class="briefing-items"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Metrics Row -->
+          <div class="metrics-grid">
+            <div class="metric-card" data-go="inbox">
+              <div class="metric-top"><span>Inbox Triage</span><span class="emoji">✉</span></div>
+              <strong id="metricInboxTotal">0</strong>
+              <div class="metric-sub" id="metricInboxHigh">0 high priority</div>
+            </div>
+            <div class="metric-card" data-go="tasks">
+              <div class="metric-top"><span>Active Tasks</span><span class="emoji">☑</span></div>
+              <strong id="metricTasksTotal">0</strong>
+              <div class="metric-sub" id="metricTasksCompleted">0 completed</div>
+            </div>
+            <div class="metric-card" data-go="followups">
+              <div class="metric-top"><span>Awaiting Response</span><span class="emoji">⏳</span></div>
+              <strong id="metricFollowupsTotal">0</strong>
+              <div class="metric-sub">Follow-up radar</div>
+            </div>
+            <div class="metric-card" data-go="analytics">
+              <div class="metric-top"><span>Time Reclaimed</span><span class="emoji">⚡</span></div>
+              <strong id="metricTimeSaved">0 hrs</strong>
+              <div class="metric-sub">AI automation impact</div>
+            </div>
+          </div>
+
+          <!-- Split Dashboard View: Deadline Radar & Recent Priorities -->
+          <div class="dashboard-split">
+            <div class="card">
+              <div class="card-head">
+                <h2>🎯 Deadline Radar</h2>
+                <button type="button" class="btn-link" data-go="tasks">View all tasks →</button>
+              </div>
+              <div id="deadlineRadarList" class="radar-list"></div>
+            </div>
+            <div class="card">
+              <div class="card-head">
+                <h2>✉ Priority Conversations</h2>
+                <button type="button" class="btn-link" data-go="inbox">Open inbox →</button>
+              </div>
+              <div id="priorityEmailPreviewList" class="priority-preview-list"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. SMART INBOX -->
+        <section class="section" id="view-inbox">
+          <div class="view-header">
+            <div>
+              <h1>Smart Inbox</h1>
+              <p class="subtitle">Provider-synced communications automatically categorized and prioritized by AI.</p>
+            </div>
+            <div class="header-actions">
+              <button type="button" class="btn-secondary" id="syncInboxBtn">↻ Sync Now</button>
+              <button type="button" class="btn-primary" id="connectAccountBtn">+ Connect Account</button>
+            </div>
+          </div>
+
+          <!-- Categories Navigation -->
+          <div class="inbox-categories" id="inboxCategoryTabs">
+            <button class="cat-pill active" data-category="all">All <span class="badge" id="catAllCount">0</span></button>
+            <button class="cat-pill" data-category="Primary">Primary <span class="badge" id="catPrimaryCount">0</span></button>
+            <button class="cat-pill" data-category="Work">Work <span class="badge" id="catWorkCount">0</span></button>
+            <button class="cat-pill" data-category="Finance">Finance <span class="badge" id="catFinanceCount">0</span></button>
+            <button class="cat-pill" data-category="Education">Education <span class="badge" id="catEducationCount">0</span></button>
+            <button class="cat-pill" data-category="Updates">Updates <span class="badge" id="catUpdatesCount">0</span></button>
+            <button class="cat-pill" data-category="Spam/Suspicious">Spam/Suspicious <span class="badge red" id="catSpamCount">0</span></button>
+          </div>
+
+          <!-- Inbox Filters Toolbar -->
+          <div class="inbox-toolbar">
+            <div class="toolbar-filters">
+              <button class="filter-btn active" data-filter="all">All</button>
+              <button class="filter-btn" data-filter="unread">Unread Only</button>
+              <button class="filter-btn" data-filter="starred">Starred ⭐</button>
+              <button class="filter-btn" data-filter="high">High Priority 🔥</button>
+            </div>
+            <div class="toolbar-info" id="inboxStatusSummary">Loading threads...</div>
+          </div>
+
+          <!-- Threads List Container -->
+          <div class="thread-list-container">
+            <div class="thread-list" id="threadList"></div>
+          </div>
+        </section>
+
+        <!-- 3. AI ASSISTANT -->
+        <section class="section" id="view-assistant">
+          <div class="view-header">
+            <div>
+              <h1>AI Personal Assistant</h1>
+              <p class="subtitle">Context-aware intelligence answering queries from your authorized emails, tasks, and calendar.</p>
+            </div>
+          </div>
+
+          <div class="assistant-layout">
+            <div class="assistant-chat-panel">
+              <div class="chat-history" id="assistantChatHistory">
+                <div class="chat-bubble assistant">
+                  <div class="bubble-avatar">🤖</div>
+                  <div class="bubble-content">
+                    <p>Hello! I am your <strong>InboxPilot AI Assistant</strong>. I have indexed your communications, tasks, deadlines, and schedule. How can I help you take action right now?</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Suggested Queries -->
+              <div class="suggested-queries">
+                <button type="button" class="query-chip" data-query="What are my most urgent emails today?">🔥 What are my most urgent emails?</button>
+                <button type="button" class="query-chip" data-query="What tasks are due tomorrow or Friday?">☑ What tasks are due this week?</button>
+                <button type="button" class="query-chip" data-query="Which people haven't replied to me yet?">⏳ Who hasn't replied to me?</button>
+                <button type="button" class="query-chip" data-query="Summarize my meeting and venue logistics.">📅 Summarize meeting logistics</button>
+              </div>
+
+              <!-- Input Area -->
+              <form class="chat-input-bar" id="assistantForm">
+                <input type="text" id="assistantQueryInput" placeholder="Ask anything about your emails, tasks, or calendar..." autocomplete="off" required/>
+                <button type="submit" class="btn-primary" id="assistantSendBtn">Send →</button>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4. TASKS & PROJECTS -->
+        <section class="section" id="view-tasks">
+          <div class="view-header">
+            <div>
+              <h1>Tasks & Projects</h1>
+              <p class="subtitle">Full-lifecycle task tracking with multi-view presentation and email source provenance.</p>
+            </div>
+            <div class="header-actions">
+              <div class="view-switch-group">
+                <button type="button" class="btn-switch active" data-taskview="list">List View</button>
+                <button type="button" class="btn-switch" data-taskview="kanban">Kanban Board</button>
+              </div>
+              <button type="button" class="btn-primary" id="createTaskBtn">+ New Task</button>
+            </div>
+          </div>
+
+          <!-- List View -->
+          <div id="tasksListView" class="task-view-container">
+            <div class="card full-card">
+              <div class="card-head">
+                <h2>All Action Items</h2>
+                <span class="subtle" id="tasksListCount">0 items</span>
+              </div>
+              <div class="task-list" id="tasksAllList"></div>
+            </div>
+          </div>
+
+          <!-- Kanban View -->
+          <div id="tasksKanbanView" class="task-view-container" style="display:none;">
+            <div class="kanban-grid">
+              <div class="kanban-col" data-col="todo">
+                <div class="kanban-head"><strong>To Do</strong><span class="badge" id="kbTodoCount">0</span></div>
+                <div class="kanban-cards" id="kbTodoCards"></div>
+              </div>
+              <div class="kanban-col" data-col="in_progress">
+                <div class="kanban-head"><strong>In Progress</strong><span class="badge yellow" id="kbProgressCount">0</span></div>
+                <div class="kanban-cards" id="kbProgressCards"></div>
+              </div>
+              <div class="kanban-col" data-col="blocked">
+                <div class="kanban-head"><strong>Blocked / Waiting</strong><span class="badge red" id="kbBlockedCount">0</span></div>
+                <div class="kanban-cards" id="kbBlockedCards"></div>
+              </div>
+              <div class="kanban-col" data-col="completed">
+                <div class="kanban-head"><strong>Completed</strong><span class="badge green" id="kbCompletedCount">0</span></div>
+                <div class="kanban-cards" id="kbCompletedCards"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 5. CALENDAR -->
+        <section class="section" id="view-calendar">
+          <div class="view-header">
+            <div>
+              <h1>Calendar & Schedule</h1>
+              <p class="subtitle">Meeting extraction, upcoming appointments, and deadline visualization.</p>
+            </div>
+            <div class="header-actions">
+              <button type="button" class="btn-primary" id="addCalendarEventBtn">+ New Event</button>
+            </div>
+          </div>
+
+          <div class="calendar-layout">
+            <div class="card month-card">
+              <div class="month-head">
+                <button class="icon-btn" id="calPrevBtn" type="button">‹</button>
+                <h2 id="calendarMonthTitle">November 2026</h2>
+                <div class="month-actions">
+                  <button class="btn-secondary" id="calTodayBtn" type="button">Today</button>
+                  <button class="icon-btn" id="calNextBtn" type="button">›</button>
+                </div>
+              </div>
+              <div class="weekdays">
+                <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+              </div>
+              <div class="month-grid" id="calendarMonthGrid"></div>
+            </div>
+
+            <div class="card calendar-detail">
+              <div class="card-head">
+                <div>
+                  <h2 id="calendarDayHeading">Events for Today</h2>
+                  <p id="calendarDayCount">0 events scheduled</p>
+                </div>
+              </div>
+              <div class="calendar-events-list" id="calendarDayEventsList"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 6. KNOWLEDGE HUB -->
+        <section class="section" id="view-knowledge">
+          <div class="view-header">
+            <div>
+              <h1>Knowledge Hub</h1>
+              <p class="subtitle">Searchable repository of approved facts, decisions, and context extracted from communication.</p>
+            </div>
+            <div class="header-actions">
+              <button type="button" class="btn-primary" id="addKnowledgeBtn">+ Add Knowledge</button>
+            </div>
+          </div>
+
+          <div class="knowledge-toolbar">
+            <input type="search" id="knowledgeSearchInput" class="search-field" placeholder="Search knowledge items by keyword or topic..."/>
+          </div>
+
+          <div class="knowledge-grid" id="knowledgeGrid"></div>
+        </section>
+
+        <!-- 7. FOLLOW-UPS -->
+        <section class="section" id="view-followups">
+          <div class="view-header">
+            <div>
+              <h1>Follow-up Management</h1>
+              <p class="subtitle">Track sent emails awaiting responses, expected dates, and draft reminder nudges.</p>
+            </div>
+            <div class="header-actions">
+              <button type="button" class="btn-primary" id="newFollowupBtn">+ Add Follow-up</button>
+            </div>
+          </div>
+
+          <div class="card full-card">
+            <div class="card-head">
+              <h2>Pending Responses ("Waiting For")</h2>
+              <span class="subtle" id="followupsCount">0 items</span>
+            </div>
+            <div class="followup-list" id="followupsList"></div>
+          </div>
+        </section>
+
+        <!-- 8. AUTOMATION STUDIO -->
+        <section class="section" id="view-automations">
+          <div class="view-header">
+            <div>
+              <h1>Automation Studio</h1>
+              <p class="subtitle">Visual Trigger → Condition → Action workflow builder for hands-free productivity.</p>
+            </div>
+            <div class="header-actions">
+              <button type="button" class="btn-primary" id="createWorkflowBtn">+ New Workflow</button>
+            </div>
+          </div>
+
+          <div class="automations-grid" id="workflowsList"></div>
+
+          <div class="card full-card" style="margin-top: 24px;">
+            <div class="card-head">
+              <h2>Execution Run History</h2>
+              <span class="subtle">Audit log of automated triggers</span>
+            </div>
+            <div class="run-history-list" id="workflowRunsList"></div>
+          </div>
+        </section>
+
+        <!-- 9. ANALYTICS -->
+        <section class="section" id="view-analytics">
+          <div class="view-header">
+            <div>
+              <h1>Productivity Analytics</h1>
+              <p class="subtitle">Real-time database metrics detailing workload, completion velocity, and time saved.</p>
+            </div>
+          </div>
+
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <div class="metric-top"><span>Emails Triaged</span><span>✉</span></div>
+              <strong id="anEmailsProcessed">0</strong>
+              <div class="metric-sub">Categorized by AI</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-top"><span>Tasks Completed</span><span>✓</span></div>
+              <strong id="anTasksCompleted">0</strong>
+              <div class="metric-sub">Across all projects</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-top"><span>Pending Follow-ups</span><span>⏳</span></div>
+              <strong id="anPendingFollowups">0</strong>
+              <div class="metric-sub">Awaiting replies</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-top"><span>Hours Reclaimed</span><span>⚡</span></div>
+              <strong id="anHoursReclaimed">0.0</strong>
+              <div class="metric-sub">Efficiency gains</div>
+            </div>
+          </div>
+
+          <div class="dashboard-split" style="margin-top: 24px;">
+            <div class="card">
+              <div class="card-head"><h2>Inbox Category Breakdown</h2></div>
+              <div class="chart-container" id="anCategoryChart"></div>
+            </div>
+            <div class="card">
+              <div class="card-head"><h2>Weekly Productivity Velocity</h2></div>
+              <div class="chart-container" id="anWeeklyChart"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 10. SETTINGS & PRIVACY -->
+        <section class="section" id="view-settings">
+          <div class="view-header">
+            <div>
+              <h1>Settings & Security</h1>
+              <p class="subtitle">Account profile, connected email providers, privacy controls, and data management.</p>
+            </div>
+          </div>
+
+          <div class="settings-layout">
+            <div class="card">
+              <div class="card-head"><h2>User Profile</h2></div>
+              <form id="settingsProfileForm">
+                <label class="form-label" for="stEmail">Email Address</label>
+                <input class="form-input" id="stEmail" type="email" disabled/>
+                
+                <label class="form-label" for="stDisplayName">Display Name</label>
+                <input class="form-input" id="stDisplayName" type="text" placeholder="Your name"/>
+
+                <label class="form-label" for="stAiTone">Default AI Reply Tone</label>
+                <select class="form-input" id="stAiTone">
+                  <option value="professional">Professional — balanced & polished</option>
+                  <option value="concise">Concise — direct & bulleted</option>
+                  <option value="friendly">Friendly — warm & collaborative</option>
+                  <option value="formal">Formal — traditional etiquette</option>
+                  <option value="persuasive">Persuasive — confident call to action</option>
+                </select>
+
+                <button type="submit" class="btn-primary" style="margin-top:16px;">Save Preferences</button>
+              </form>
+            </div>
+
+            <div class="card">
+              <div class="card-head"><h2>Connected Inboxes & Providers</h2></div>
+              <div id="stAccountsList" class="accounts-list"></div>
+              <button type="button" class="btn-secondary" id="stAddAccountBtn" style="margin-top:16px;">+ Connect Another Inbox</button>
+            </div>
+
+            <div class="card">
+              <div class="card-head"><h2>Security & Password</h2></div>
+              <form id="settingsPasswordForm">
+                <label class="form-label" for="stCurrentPass">Current Password</label>
+                <input class="form-input" id="stCurrentPass" type="password" required/>
+                
+                <label class="form-label" for="stNewPass">New Password</label>
+                <input class="form-input" id="stNewPass" type="password" minlength="8" required/>
+
+                <button type="submit" class="btn-secondary" style="margin-top:16px;">Update Password</button>
+              </form>
+            </div>
+
+            <div class="card danger-card">
+              <div class="card-head"><h2>Privacy, Export & Deletion</h2></div>
+              <p>Download a copy of your records or permanently delete your account and all associated communication data.</p>
+              <div class="danger-actions">
+                <button type="button" class="btn-secondary" id="stExportBtn">Download Data Export (.json)</button>
+                <button type="button" class="btn-danger" id="stDeleteAccountBtn">Permanently Delete Account</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 3. MODALS & OVERLAYS                                                      -->
+  <!-- ========================================================================= -->
+
+  <!-- Auth Modal (Sign In / Register) -->
+  <div class="modal-backdrop" id="authModal" hidden>
+    <div class="modal auth-modal" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <h3 id="authModalTitle">Sign In to InboxPilot</h3>
+        <button type="button" class="close-x" id="closeAuthModal">×</button>
+      </div>
+      <div class="auth-tabs">
+        <button type="button" class="auth-tab active" id="tabLoginBtn">Sign In</button>
+        <button type="button" class="auth-tab" id="tabRegisterBtn">Create Account</button>
+      </div>
+      <form id="authForm">
+        <div id="displayNameField" hidden>
+          <label class="form-label" for="authDisplayName">Your Name</label>
+          <input class="form-input" id="authDisplayName" type="text" placeholder="Alex Hunter"/>
+        </div>
+        <label class="form-label" for="authEmail">Email Address</label>
+        <input class="form-input" id="authEmail" type="email" placeholder="name@company.com" required/>
+        <label class="form-label" for="authPassword">Password</label>
+        <input class="form-input" id="authPassword" type="password" placeholder="••••••••" required/>
+        <div class="auth-error" id="authErrorMsg" hidden></div>
+        <button type="submit" class="btn-primary btn-block" id="authSubmitBtn">Sign In →</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Thread Viewer Modal (with AI Summarize & Reply Drafter) -->
+  <div class="modal-backdrop" id="threadModal" hidden>
+    <div class="modal thread-modal" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <div>
+          <span class="badge" id="modalThreadCategory">Primary</span>
+          <span class="badge" id="modalThreadPriority">MEDIUM</span>
+          <h3 id="modalThreadSubject" style="margin-top:8px;">Thread Subject</h3>
+        </div>
+        <button type="button" class="close-x" id="closeThreadModal">×</button>
+      </div>
+
+      <!-- Security Warning Banner (if phishing / suspicious) -->
+      <div class="security-alert-banner" id="threadSecurityBanner" hidden>
+        <strong>⚠️ Security Warning: Suspicious Email Detected</strong>
+        <p id="threadSecurityReason"></p>
+      </div>
+
+      <!-- AI Action Bar -->
+      <div class="thread-ai-bar">
+        <button type="button" class="btn-ai" id="aiSummarizeBtn">✦ Summarize Thread</button>
+        <button type="button" class="btn-ai" id="aiExtractTasksBtn">☑ Extract Tasks</button>
+        <button type="button" class="btn-ai" id="aiDraftReplyBtn">✍ Draft Reply</button>
+      </div>
+
+      <!-- AI Summary / Tasks Panel -->
+      <div class="ai-output-box" id="threadAiOutput" hidden>
+        <div class="ai-box-head">
+          <strong id="aiOutputTitle">AI Intelligence</strong>
+          <button type="button" class="btn-link" id="closeAiOutput">Dismiss</button>
+        </div>
+        <div id="aiOutputContent"></div>
+      </div>
+
+      <!-- Reply Drafter Box -->
+      <div class="reply-draft-box" id="replyDraftBox" hidden>
+        <div class="draft-head">
+          <strong>Contextual Reply Draft (Review before sending)</strong>
+          <div class="draft-tone-select">
+            <label>Tone: </label>
+            <select id="replyToneSelect">
+              <option value="professional">Professional</option>
+              <option value="concise">Concise</option>
+              <option value="friendly">Friendly</option>
+              <option value="formal">Formal</option>
+              <option value="persuasive">Persuasive</option>
+            </select>
+          </div>
+        </div>
+        <textarea id="replyDraftText" rows="5"></textarea>
+        <div class="draft-actions">
+          <button type="button" class="btn-secondary" id="cancelReplyBtn">Discard</button>
+          <button type="button" class="btn-primary" id="confirmSendReplyBtn">✓ Approve & Prepare Sending</button>
+        </div>
+      </div>
+
+      <!-- Messages Stream -->
+      <div class="thread-messages-stream" id="threadMessagesStream"></div>
+    </div>
+  </div>
+
+  <!-- Quick Add / Task Modal -->
+  <div class="modal-backdrop" id="quickAddModal" hidden>
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <h3 id="quickAddTitle">Create Task</h3>
+        <button type="button" class="close-x" id="closeQuickAddModal">×</button>
+      </div>
+      <form id="quickAddForm">
+        <label class="form-label" for="qaTitle">Title</label>
+        <input class="form-input" id="qaTitle" type="text" placeholder="e.g. Confirm event venue" required/>
+        <label class="form-label" for="qaDescription">Description</label>
+        <textarea class="form-input" id="qaDescription" rows="2" placeholder="Context or details..."></textarea>
+        <div class="form-row">
+          <div>
+            <label class="form-label" for="qaDue">Due Date</label>
+            <input class="form-input" id="qaDue" type="text" placeholder="e.g. Today 4 PM, Tomorrow"/>
+          </div>
+          <div>
+            <label class="form-label" for="qaPriority">Priority</label>
+            <select class="form-input" id="qaPriority">
+              <option value="urgent">Urgent</option>
+              <option value="high">High</option>
+              <option value="medium" selected>Medium</option>
+              <option value="low">Low</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-foot">
+          <button type="button" class="btn-secondary" id="cancelQuickAdd">Cancel</button>
+          <button type="submit" class="btn-primary">Create Task</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Connect Account Modal -->
+  <div class="modal-backdrop" id="connectAccountModal" hidden>
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <h3>Connect Email Account</h3>
+        <button type="button" class="close-x" id="closeConnectModal">×</button>
+      </div>
+      <form id="connectAccountForm">
+        <label class="form-label" for="connProvider">Email Provider</label>
+        <select class="form-input" id="connProvider">
+          <option value="google">Google / Gmail API (OAuth2)</option>
+          <option value="outlook">Microsoft 365 / Outlook</option>
+          <option value="imap">Standard IMAP / SMTP</option>
+          <option value="demo" selected>Interactive Demo Inbox (Full Features)</option>
+        </select>
+        <label class="form-label" for="connEmail">Email Address</label>
+        <input class="form-input" id="connEmail" type="email" placeholder="alex@venturex.io" required/>
+        <p class="subtle" style="margin-top:8px;">
+          Note: InboxPilot requests minimum read & draft scopes. Tokens are encrypted at rest using AES/HMAC.
+        </p>
+        <div class="modal-foot">
+          <button type="button" class="btn-secondary" id="cancelConnectModal">Cancel</button>
+          <button type="submit" class="btn-primary">Connect & Synchronize</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Global Toast Notification -->
+  <div class="toast-notification" id="toastNotification" role="alert"></div>
+
+  <!-- Config & App Script -->
+  <script src="./config.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>

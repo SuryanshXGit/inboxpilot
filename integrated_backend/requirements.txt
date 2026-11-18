@@ -10,7 +10,7 @@ pydantic>=2.9,<3.0
 pydantic-settings>=2.2,<3.0
 python-dotenv>=1.0,<2.0
 
-# Authentication
+# Authentication & Encryption
 PyJWT>=2.8,<3.0
 
 # HTTP client used by the AI provider adapters and the test suite

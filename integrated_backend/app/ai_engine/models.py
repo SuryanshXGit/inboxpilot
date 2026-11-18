@@ -156,6 +156,86 @@ class EvaluationResult(BaseModel):
 
 
 # ---------------------------------------------------------------------------
+# Email Intelligence Models (InboxPilot 2.0)
+# ---------------------------------------------------------------------------
+
+
+class EmailSummaryResult(BaseModel):
+    """Structured summary of an email message or conversation thread."""
+
+    model_config = ConfigDict(extra="ignore", str_strip_whitespace=True)
+
+    overview: str = Field(min_length=1, max_length=5_000)
+    key_points: list[str] = Field(default_factory=list, max_length=20)
+    decisions: list[str] = Field(default_factory=list, max_length=20)
+    questions: list[str] = Field(default_factory=list, max_length=20)
+    next_steps: list[str] = Field(default_factory=list, max_length=20)
+
+
+class EmailPriorityResult(BaseModel):
+    """Explainable priority scoring for inbox messages."""
+
+    model_config = ConfigDict(extra="ignore", str_strip_whitespace=True)
+
+    priority: str = Field(pattern=r"^(HIGH|MEDIUM|LOW)$")
+    urgency: str = Field(default="medium")
+    importance: str = Field(default="medium")
+    reason: str = Field(min_length=1, max_length=1_000)
+    deadlines_detected: list[str] = Field(default_factory=list)
+    action_required: bool = False
+
+
+class ReplyDraftResult(BaseModel):
+    """AI-drafted contextual reply."""
+
+    model_config = ConfigDict(extra="ignore", str_strip_whitespace=True)
+
+    tone: str = Field(default="professional")
+    subject: str = Field(min_length=1, max_length=500)
+    reply_body: str = Field(min_length=1, max_length=10_000)
+    key_points_addressed: list[str] = Field(default_factory=list)
+
+
+class ExtractedTask(BaseModel):
+    title: str = Field(min_length=1, max_length=300)
+    description: str = Field(default="", max_length=2_000)
+    due_date: str | None = Field(default=None, max_length=50)
+    priority: str = Field(default="medium")
+    confidence: float = Field(default=0.85, ge=0.0, le=1.0)
+    owner: str = Field(default="me", max_length=100)
+
+
+class TaskExtractionResult(BaseModel):
+    """Action items and tasks extracted from communication."""
+
+    model_config = ConfigDict(extra="ignore", str_strip_whitespace=True)
+
+    tasks: list[ExtractedTask] = Field(default_factory=list)
+
+
+class SecurityAnalysisResult(BaseModel):
+    """Phishing and fraud heuristic evaluation."""
+
+    model_config = ConfigDict(extra="ignore", str_strip_whitespace=True)
+
+    is_suspicious: bool = False
+    risk_level: str = Field(default="low")  # low, medium, high, critical
+    indicators: list[str] = Field(default_factory=list)
+    explanation: str = Field(default="No suspicious elements detected.", max_length=2_000)
+    safety_recommendations: list[str] = Field(default_factory=list)
+
+
+class AssistantChatResult(BaseModel):
+    """Conversational assistant answer with data citations."""
+
+    model_config = ConfigDict(extra="ignore", str_strip_whitespace=True)
+
+    answer: str = Field(min_length=1, max_length=10_000)
+    sources: list[dict[str, Any]] = Field(default_factory=list)
+    suggested_actions: list[str] = Field(default_factory=list)
+
+
+# ---------------------------------------------------------------------------
 # Helpers used by the workflow and the API adapter
 # ---------------------------------------------------------------------------
 
@@ -164,7 +244,14 @@ TASK_MODELS: dict[str, type[BaseModel]] = {
     "lesson": LessonResult,
     "quiz": QuizResult,
     "evaluation": EvaluationResult,
+    "email_summary": EmailSummaryResult,
+    "email_priority": EmailPriorityResult,
+    "email_reply": ReplyDraftResult,
+    "email_tasks": TaskExtractionResult,
+    "email_security": SecurityAnalysisResult,
+    "assistant_chat": AssistantChatResult,
 }
+
 
 
 def model_payload(value: Any) -> Any:

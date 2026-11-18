@@ -20,9 +20,15 @@ from pydantic import BaseModel, ValidationError
 from app.ai_engine import prompts
 from app.ai_engine.models import (
     AIOutputInvalid,
+    AssistantChatResult,
+    EmailPriorityResult,
+    EmailSummaryResult,
     EvaluationResult,
     LessonResult,
     QuizResult,
+    ReplyDraftResult,
+    SecurityAnalysisResult,
+    TaskExtractionResult,
     TASK_MODELS,
 )
 from app.ai_engine.providers import generate_structured
@@ -101,6 +107,50 @@ def _prepare_node(state: WorkflowState) -> dict[str, Any]:
             count=int(payload.get("count") or 5),
             schema=schema,
             max_material_chars=settings.AI_MAX_MATERIAL_CHARS,
+        )
+    elif task == "email_summary":
+        system_prompt, user_prompt = prompts.build_email_summary_prompts(
+            subject=str(payload.get("subject", "")),
+            sender=str(payload.get("sender", "")),
+            content=str(payload.get("content", "")),
+            schema=schema,
+        )
+    elif task == "email_priority":
+        system_prompt, user_prompt = prompts.build_priority_prompts(
+            subject=str(payload.get("subject", "")),
+            sender=str(payload.get("sender", "")),
+            content=str(payload.get("content", "")),
+            schema=schema,
+        )
+    elif task == "email_reply":
+        system_prompt, user_prompt = prompts.build_reply_prompts(
+            subject=str(payload.get("subject", "")),
+            sender=str(payload.get("sender", "")),
+            content=str(payload.get("content", "")),
+            tone=str(payload.get("tone") or "professional"),
+            user_notes=str(payload.get("user_notes", "")),
+            schema=schema,
+        )
+    elif task == "email_tasks":
+        system_prompt, user_prompt = prompts.build_task_extraction_prompts(
+            subject=str(payload.get("subject", "")),
+            sender=str(payload.get("sender", "")),
+            content=str(payload.get("content", "")),
+            schema=schema,
+        )
+    elif task == "email_security":
+        system_prompt, user_prompt = prompts.build_security_analysis_prompts(
+            subject=str(payload.get("subject", "")),
+            sender=str(payload.get("sender", "")),
+            sender_email=str(payload.get("sender_email", "")),
+            content=str(payload.get("content", "")),
+            schema=schema,
+        )
+    elif task == "assistant_chat":
+        system_prompt, user_prompt = prompts.build_assistant_chat_prompts(
+            query=str(payload.get("query", "")),
+            context_text=str(payload.get("context_text", "")),
+            schema=schema,
         )
     else:
         system_prompt, user_prompt = prompts.build_evaluation_prompts(
@@ -267,3 +317,95 @@ async def run_evaluation(
     )
     assert isinstance(result, EvaluationResult)
     return result
+
+
+async def run_email_summary(
+    *,
+    subject: str,
+    sender: str,
+    content: str,
+) -> EmailSummaryResult:
+    result = await run_workflow(
+        "email_summary",
+        {"subject": subject, "sender": sender, "content": content},
+    )
+    return result  # type: ignore
+
+
+async def run_email_priority(
+    *,
+    subject: str,
+    sender: str,
+    content: str,
+) -> EmailPriorityResult:
+    result = await run_workflow(
+        "email_priority",
+        {"subject": subject, "sender": sender, "content": content},
+    )
+    return result  # type: ignore
+
+
+async def run_email_reply(
+    *,
+    subject: str,
+    sender: str,
+    content: str,
+    tone: str = "professional",
+    user_notes: str = "",
+) -> ReplyDraftResult:
+    result = await run_workflow(
+        "email_reply",
+        {
+            "subject": subject,
+            "sender": sender,
+            "content": content,
+            "tone": tone,
+            "user_notes": user_notes,
+        },
+    )
+    return result  # type: ignore
+
+
+async def run_task_extraction(
+    *,
+    subject: str,
+    sender: str,
+    content: str,
+) -> TaskExtractionResult:
+    result = await run_workflow(
+        "email_tasks",
+        {"subject": subject, "sender": sender, "content": content},
+    )
+    return result  # type: ignore
+
+
+async def run_security_analysis(
+    *,
+    subject: str,
+    sender: str,
+    sender_email: str,
+    content: str,
+) -> SecurityAnalysisResult:
+    result = await run_workflow(
+        "email_security",
+        {
+            "subject": subject,
+            "sender": sender,
+            "sender_email": sender_email,
+            "content": content,
+        },
+    )
+    return result  # type: ignore
+
+
+async def run_assistant_chat(
+    *,
+    query: str,
+    context_text: str,
+) -> AssistantChatResult:
+    result = await run_workflow(
+        "assistant_chat",
+        {"query": query, "context_text": context_text},
+    )
+    return result  # type: ignore
+

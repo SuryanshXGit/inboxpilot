@@ -48,8 +48,8 @@ class Settings(BaseSettings):
     INBOXPILOT_DIR: str = ""
 
     # -- AI provider selection ----------------------------------------------
-    AI_PRIMARY_PROVIDER: str = "openai"
-    AI_FALLBACK_PROVIDER: str = "groq"
+    AI_PRIMARY_PROVIDER: str = "groq"
+    AI_FALLBACK_PROVIDER: str = "openai"
 
     # Reliability. Retries are bounded and apply only to transient errors.
     AI_TIMEOUT_SECONDS: float = Field(default=30.0, ge=1.0, le=180.0)
@@ -117,9 +117,16 @@ class Settings(BaseSettings):
             return None
         candidate = Path(value).expanduser()
         if not candidate.is_absolute():
-            candidate = BACKEND_DIR.parent / candidate
+            if (BACKEND_DIR / candidate).is_dir():
+                candidate = BACKEND_DIR / candidate
+            else:
+                candidate = BACKEND_DIR.parent / candidate
         candidate = candidate.resolve()
-        return candidate if candidate.is_dir() else None
+        if candidate.is_dir():
+            if (candidate / "frontend").is_dir() and not (candidate / "index.html").is_file():
+                return (candidate / "frontend").resolve()
+            return candidate
+        return None
 
     @property
     def primary_provider(self) -> str | None:
